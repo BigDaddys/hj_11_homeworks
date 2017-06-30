@@ -1,6 +1,6 @@
 'use strict';
 
-function handleClick () {
+function handleClick() {
   openMail();
 }
 
