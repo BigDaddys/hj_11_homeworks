@@ -3,11 +3,10 @@
   const player = document.getElementsByClassName('mediaplayer')[0];
   const audio = player.getElementsByTagName('audio')[0];
   const title = player.getElementsByClassName('title')[0];
-  const controlsBtns = player.getElementsByTagName('button');
-  const playPauseBtn = controlsBtns[1];
-  const stopBtn = controlsBtns[2];
-  const prevBtn = controlsBtns[0];
-  const nextBtn = controlsBtns[3];
+  const playPauseBtn = player.getElementsByClassName('playstate')[0];
+  const stopBtn = player.getElementsByClassName('stop')[0];
+  const prevBtn = player.getElementsByClassName('back')[0];
+  const nextBtn = player.getElementsByClassName('next')[0];
   const trackList = ['LA Chill Tour', 'LA Fusion Jam', 'This is it band'];
   let trackIndex = 0;
 
