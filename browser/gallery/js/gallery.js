@@ -4,7 +4,9 @@
   const nextBtn = document.getElementById('nextPhoto');
   const currentPhoto = document.getElementById('currentPhoto');
   const photoList = ['breuer-building', 'guggenheim-museum', 'headquarters', 'IAC', 'new-museum'];
-  let index = -1;
+  let index = 0;
+
+  currentPhoto.src = `i/${photoList[0]}.jpg`;
 
   function prevPhoto() {
     if (index <= 0) {
