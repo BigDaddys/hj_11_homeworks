@@ -1,8 +1,11 @@
 const addBtn = document.querySelectorAll('.box > .add');
 const cartCount = document.getElementById('cart-count');
 const cartTotalPrice = document.getElementById('cart-total-price');
-let totalPrice = 0;
-let totalItems = 0;
+
+window.addEventListener('load', () => {
+  let totalPrice = 0;
+  let totalItems = 0;
+});
 
 function addToCart(event) {
   totalItems++;
