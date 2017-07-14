@@ -3,19 +3,21 @@
   const piano = document.getElementById('pianoKeys');
   const pianoKeysList = piano.getElementsByTagName('li');
   const pianoSongList = ['first', 'second', 'third', 'fourth', 'fifth'];
-  let type = 'middle';
+  let type;
 
   Array.from(pianoKeysList).forEach((key, ind) => {
     const audio = key.getElementsByTagName('audio')[0];
 
     document.addEventListener('keydown', (event) => {
-      if (event.shiftKey && event.repeat) {
+      event.preventDefault();
+
+      if (event.shiftKey) {
         type = 'lower';
         piano.classList.add('lower');
         piano.classList.remove('middle', 'higher');
       }
 
-      if (event.altKey && event.repeat) {
+      if (event.altKey) {
         type = 'higher';
         piano.classList.add('higher');
         piano.classList.remove('middle', 'lower');
