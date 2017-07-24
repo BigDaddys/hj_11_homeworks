@@ -3,10 +3,10 @@ window.addEventListener('DOMContentLoaded', () => {
   const tabsNav = tabs.querySelector('.tabs-nav');
   const tabsContent = tabs.querySelector('.tabs-content');
   const articlesList = tabsContent.children;
+  const tabTmpl = tabsNav.removeChild(tabsNav.firstElementChild);
 
   Array.from(articlesList).forEach((article, i) => {
     article.classList.add('hidden');
-    article.setAttribute('id', 'tab_' + (i + 1));
     renderTab(article, i + 1);
   });
 
@@ -15,19 +15,18 @@ window.addEventListener('DOMContentLoaded', () => {
   function renderTab(article, index) {
     const tabIcon = article.dataset.tabIcon;
     const tabTitle = article.dataset.tabTitle;
-    const tabNavLI = document.createElement('li');
-    const tabNavA = document.createElement('a');
+    const tabNavItem = tabTmpl.cloneNode(true);
+    const tabNavLink = tabNavItem.firstElementChild;
 
-    tabNavA.setAttribute('href', '#tab_' + index);
-    tabNavA.classList.add('fa', tabIcon);
-    tabNavA.textContent = tabTitle;
+    tabNavLink.classList.add(tabIcon);
+    tabNavLink.textContent = tabTitle;
 
-    tabNavA.addEventListener('click', (event) => {
+    tabNavLink.addEventListener('click', (event) => {
       event.preventDefault();
 
       const listLi = tabsNav.children;
       const currentLi = event.target.parentElement;
-      const currentArticle = tabsContent.querySelector(event.target.getAttribute('href'));
+      const currentArticle = tabsContent.querySelector(`[data-tab-title=${event.target.textContent}]`);
 
       for (let item of listLi) {
         item.classList.remove('ui-tabs-active');
@@ -37,15 +36,14 @@ window.addEventListener('DOMContentLoaded', () => {
         itemArticle.classList.add('hidden');
       }
 
-      event.target.parentElement.classList.add('ui-tabs-active');
+      currentLi.classList.add('ui-tabs-active');
       currentArticle.classList.remove('hidden');
     });
 
-    tabNavLI.appendChild(tabNavA);
-    tabsNav.appendChild(tabNavLI);
+    tabsNav.appendChild(tabNavItem);
 
     if (index === 1) {
-      tabNavLI.classList.add('ui-tabs-active');
+      tabNavItem.classList.add('ui-tabs-active');
     }
   }
 
