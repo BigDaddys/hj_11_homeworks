@@ -1,16 +1,23 @@
 'use strict';
 
 function toggleMenu(event) {
-  if (this.classList.contains('show')) {
-    this.classList.remove('show');
-    this.classList.add('hide');
+  if (!event.target.dataset.toggle) {
+    return;
+  }
+
+  const current = event.target.parentElement;
+
+  if (current.classList.contains('show')) {
+    current.classList.remove('show');
+    current.classList.add('hide');
   } else {
-    this.classList.add('show');
-    this.classList.remove('hide');
+    current.classList.add('show');
+    current.classList.remove('hide');
   }
 }
 
 function openLink(event) {
+  event.preventDefault();
   console.log(this.textContent);
 }
 
