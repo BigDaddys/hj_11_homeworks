@@ -1,11 +1,7 @@
 'use strict';
 
 function toggleMenu(event) {
-  if (!event.target.dataset.toggle) {
-    return;
-  }
-
-  const current = event.target.parentElement;
+  const current = event.currentTarget;
 
   if (current.classList.contains('show')) {
     current.classList.remove('show');
@@ -19,6 +15,7 @@ function toggleMenu(event) {
 function openLink(event) {
   event.preventDefault();
   console.log(this.textContent);
+  event.stopPropagation();
 }
 
 function init(node) {
@@ -29,7 +26,7 @@ function initLink(node) {
   if (node.dataset.toggle) {
     return;
   }
-  node.addEventListener('click', openLink);
+  node.addEventListener('click', openLink, true);
 }
 
 Array
