@@ -30,7 +30,6 @@ function snippetSwatchColor(data, colorDefault = 'red') {
 
   for (let item of data) {
     const tpl = document.createElement('div');
-
     tpl.dataset.value = item.type;
     tpl.classList.add('swatch-element', 'color', item.type, item.isAvailable ? 'available' : 'soldout');
     tpl.innerHTML = `
@@ -43,9 +42,7 @@ function snippetSwatchColor(data, colorDefault = 'red') {
     `;
 
     const radio = tpl.querySelector('input');
-
     radio.checked = localStorage.selectedColor === radio.value;
-
     radio.addEventListener('change', (event) => {
       localStorage.selectedColor = event.target.value;
     });
@@ -66,7 +63,6 @@ function snippetSwatchSize(data, sizeDefault = 'xl') {
 
   for (let item of data) {
     const tpl = document.createElement('div');
-
     tpl.dataset.value = item.type;
     tpl.classList.add('swatch-element', 'plain', item.type, item.isAvailable ? 'available' : 'soldout');
     tpl.innerHTML = `
@@ -78,9 +74,7 @@ function snippetSwatchSize(data, sizeDefault = 'xl') {
     `;
 
     const radio = tpl.querySelector('input');
-
     radio.checked = localStorage.selectedSize === radio.value;
-
     radio.addEventListener('change', (event) => {
       localStorage.selectedSize = event.target.value;
     });
@@ -128,36 +122,10 @@ function snippetCart(data) {
   quickCart.appendChild(tplCart);
 
   const removeBtns = quickCart.querySelectorAll('.remove');
-
   for (let btn of removeBtns) {
     btn.addEventListener('click', (event) => {
       const id = event.target.dataset.id;
-
-      const request = fetch('https://neto-api.herokuapp.com/cart/remove', {
-        body: JSON.stringify({productId: id}),
-        credentials: 'same-origin',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json'
-        }
-      });
-
-      request
-        .then((result) => {
-          if (200 <= result.status && result.status < 300) {
-            return result;
-          }
-          throw new Error(response.statusText);
-        })
-        .then((result) => result.json())
-        .then((data) => {
-          if (data.error) {
-            console.error(data.message);
-          } else {
-            snippetCart(data);
-          }
-        });
+      fetchRequest({productId: id}, 'https://neto-api.herokuapp.com/cart/remove');
     });
   }
 }
@@ -174,30 +142,30 @@ cartForm.addEventListener('submit', (event) => {
     dataToObj[key] = value;
   }
 
-  console.log(dataToObj)
+  fetchRequest(dataToObj, 'https://neto-api.herokuapp.com/cart');
+});
 
-  const request = fetch(urls[2], {
-    body: JSON.stringify(dataToObj),
+function fetchRequest(data, url) {
+  fetch(url, {
+    body: JSON.stringify(data),
     credentials: 'same-origin',
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     }
+  })
+  .then((result) => {
+    if (200 <= result.status && result.status < 300) {
+      return result;
+    }
+    throw new Error(response.statusText);
+  })
+  .then((result) => result.json())
+  .then((data) => {
+    if (data.error) {
+      console.error(data.message);
+    } else {
+      snippetCart(data);
+    }
   });
-
-  request
-    .then((result) => {
-      if (200 <= result.status && result.status < 300) {
-        return result;
-      }
-      throw new Error(response.statusText);
-    })
-    .then((result) => result.json())
-    .then((data) => {
-      if (data.error) {
-        console.error(data.message);
-      } else {
-        snippetCart(data);
-      }
-    });
-});
+}
