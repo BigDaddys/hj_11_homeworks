@@ -4,6 +4,8 @@ const chat = document.querySelector('.chat');
 const chatElems = init(chat);
 const ws = new WebSocket('wss://neto-api.herokuapp.com/chat');
 
+chatElems.content.setAttribute('style', 'overflow-y: auto;');
+
 ws.addEventListener('open', () => {
   triggerStatus('Пользователь появился в сети');
   chatElems.status.textContent = chatElems.status.dataset.online;
@@ -22,11 +24,11 @@ ws.addEventListener('message', (event) => {
   const messageUser = chatElems.templates.messageUser.cloneNode(true);
 
   if (data === '...') {
-    chatElems.content.appendChild(typingMessage);
+    chatElems.content.appendChild(typingMessage).scrollIntoView({block: "end", behavior: "smooth"});
   } else {
     addMessage(messageUser, data);
     chatElems.content.removeChild(typingMessage);
-    chatElems.content.appendChild(messageUser);
+    chatElems.content.appendChild(messageUser).scrollIntoView({block: "end", behavior: "smooth"});
   }
 });
 
@@ -37,10 +39,8 @@ chatElems.form.addEventListener('submit', (event) => {
   const messageMy = chatElems.templates.messageMy.cloneNode(true);
 
   addMessage(messageMy,value);
-  chatElems.content.appendChild(messageMy);
-
+  chatElems.content.appendChild(messageMy).scrollIntoView({block: "end", behavior: "smooth"});
   ws.send(value);
-
   chatElems.form.reset();
 });
 
@@ -68,6 +68,8 @@ function triggerStatus(messageStatus) {
 
 function addMessage(who, data) {
   const time = new Date();
+  const hour = time.getHours() < 10 ? `0${time.getHours()}` : time.getHours();
+  const minutes = time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes();
   who.querySelector('.message-text').textContent = data;
-  who.querySelector('.timestamp').textContent = `${time.getHours()}:${time.getMinutes()}`;
+  who.querySelector('.timestamp').textContent = `${hour}:${minutes}`;
 }
