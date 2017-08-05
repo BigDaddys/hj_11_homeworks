@@ -90,6 +90,10 @@ function snippetCart(data) {
 
   let totalPrice = 0;
 
+  while (quickCart.firstChild) {
+    quickCart.removeChild(quickCart.firstChild);
+  }
+
   for (let item of data) {
     const tplProduct = document.createElement('div');
     tplProduct.id = `quick-cart-product-${item.id}`;
@@ -125,34 +129,25 @@ function snippetCart(data) {
   for (let btn of removeBtns) {
     btn.addEventListener('click', (event) => {
       const id = event.target.dataset.id;
-      fetchRequest({productId: id}, 'https://neto-api.herokuapp.com/cart/remove');
+      const formData = new FormData();
+      formData.append('productId', id);
+      fetchRequest(formData, 'https://neto-api.herokuapp.com/cart/remove');
     });
   }
 }
 
 cartForm.addEventListener('submit', (event) => {
   event.preventDefault();
-
   const formData = new FormData(event.currentTarget);
-  const dataToObj = {};
-
   formData.append('productId', event.currentTarget.dataset.productId);
-
-  for (const [key, value] of formData) {
-    dataToObj[key] = value;
-  }
-
-  fetchRequest(dataToObj, 'https://neto-api.herokuapp.com/cart');
+  fetchRequest(formData, 'https://neto-api.herokuapp.com/cart');
 });
 
 function fetchRequest(data, url) {
   fetch(url, {
-    body: JSON.stringify(data),
+    body: data,
     credentials: 'same-origin',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    method: 'POST'
   })
   .then((result) => {
     if (200 <= result.status && result.status < 300) {
