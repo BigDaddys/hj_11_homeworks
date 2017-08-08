@@ -8,13 +8,10 @@ XHR.send();
 
 function renderCatalog(event) {
   const data = JSON.parse(event.target.responseText);
-  for (let item of data) {
-    content.innerHTML += `<li
-                            data-title="${item.title}"
-                            data-author="${item.author.name}"
-                            data-info="${item.info}"
-                            data-price="${item.price}">
-                          <img src="${item.cover.small}">
-                        </li>`;
-  }
+
+  content.innerHTML = Array.from(data).reduce((memo, item) => {
+    return memo + `<li data-title="${item.title}" data-author="${item.author.name}" data-info="${item.info}" data-price="${item.price}">
+                    <img src="${item.cover.small}" alt="${item.title}">
+                  </li>`;
+  }, '');
 }
