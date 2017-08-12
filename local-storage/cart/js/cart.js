@@ -125,15 +125,22 @@ function snippetCart(data) {
 
   quickCart.appendChild(tplCart);
 
-  const removeBtns = quickCart.querySelectorAll('.remove');
-  for (let btn of removeBtns) {
-    btn.addEventListener('click', (event) => {
-      const id = event.target.dataset.id;
-      const formData = new FormData();
-      formData.append('productId', id);
-      fetchRequest(formData, 'https://neto-api.herokuapp.com/cart/remove');
-    });
-  }
+  const removeBtn = quickCart.querySelector('.remove');
+  const count = quickCart.querySelector('.count');
+
+  removeBtn.addEventListener('click', (event) => {
+    const id = event.target.dataset.id;
+    const formData = new FormData();
+    formData.append('productId', id);
+    fetchRequest(formData, 'https://neto-api.herokuapp.com/cart/remove');
+
+    if (parseInt(count.textContent) === 1) {
+      while (quickCart.firstChild) {
+        quickCart.removeChild(quickCart.firstChild);
+      }
+    }
+  });
+
 }
 
 cartForm.addEventListener('submit', (event) => {
