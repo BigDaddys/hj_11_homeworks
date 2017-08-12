@@ -2,6 +2,19 @@
 
 const urlFood = 'https://neto-api.herokuapp.com/food/42';
 
+const urlList = [
+  {
+    url: urlFood,
+    funcName: 'infoRecipe'
+  },{
+    url: `${urlFood}/rating`,
+    funcName: 'ratingRecipe'
+  },{
+    url: `${urlFood}/consumers`,
+    funcName: 'listUsers'
+  }
+];
+
 const pic = document.querySelector('[data-pic]');
 const title = document.querySelector('[data-title]');
 const ingredients = document.querySelector('[data-ingredients]');
@@ -55,6 +68,10 @@ function listUsers(data) {
   consumers.appendChild(total);
 }
 
+urlList.forEach((item) => {
+  loadData(item.url, item.funcName);
+});
+
 function loadData(url, callbackName) {
   return new Promise((done, fail) => {
     const script = document.createElement('script');
@@ -65,11 +82,5 @@ function loadData(url, callbackName) {
 }
 
 function replacePortUrl(url) {
-  return /\:26406?/ig.test(url) ? url.replace(/\:26406?/ig, '') : url;
+  return url.replace(/:\d+?\//ig, '/');
 }
-
-Promise.all([
-  loadData(urlFood, 'infoRecipe'),
-  loadData(`${urlFood}/rating`, 'ratingRecipe'),
-  loadData(`${urlFood}/consumers`, 'listUsers')
-]);

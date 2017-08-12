@@ -37,7 +37,7 @@ function loadData(callbackName, url) {
 }
 
 function replacePortUrl(url) {
-  return /\:26406?/ig.test(url) ? url.replace(/\:26406?/ig, '') : url;
+  return url.replace(/:\d+?\//ig, '/');
 }
 
 loadData('renderProfile', 'https://neto-api.herokuapp.com/profile/me');
