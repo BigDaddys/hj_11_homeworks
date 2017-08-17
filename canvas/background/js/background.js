@@ -4,11 +4,15 @@ const wall = document.getElementById('wall');
 const ctx = wall.getContext('2d');
 const wallW = window.innerWidth;
 const wallH = window.innerHeight;
-// const figureCount = Math.floor((Math.random() * 1000) + 1);
-const figureCount = 1000;
+
+const figureCount = Math.floor((Math.random() * 1000) + 1);
+const figures = [];
+
 const PI = Math.PI;
+const FPS = 20;
+
 const functionsTime = [nextPoint1, nextPoint2];
-const fps = 20;
+
 
 wall.setAttribute('width', wallW);
 wall.setAttribute('height', wallH);
@@ -22,6 +26,11 @@ class Figure {
     this.color = '#ffffff';
     this.strokeWidth = 5 * this.size;
   }
+
+  draw() {
+    ctx.strokeStyle = this.color;
+    ctx.lineWidth = this.size;
+  }
 }
 
 class Tac extends Figure {
@@ -31,12 +40,13 @@ class Tac extends Figure {
   }
 
   draw() {
+    super.draw();
+    ctx.save();
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, 2 * PI);
-    ctx.lineWidth = this.size;
-    ctx.strokeStyle = this.color;
     ctx.closePath();
     ctx.stroke();
+    ctx.restore();
   }
 }
 
@@ -45,11 +55,14 @@ class Tic extends Figure {
     super();
     this.width = 20 * this.size;
     this.angel = randomNumber(0, 360);
-    this.speedRotate = randomNumber(-0.2, 0.2, true);
+    // this.speedRotate = randomNumber(-0.2, 0.2, true);
   }
 
   draw() {
+    super.draw();
+    ctx.save();
     ctx.beginPath();
+    ctx.rotate(this.angel * PI / 360);
     ctx.moveTo(this.x, this.y);
     ctx.lineTo(this.x, this.y - this.width / 2);
     ctx.moveTo(this.x, this.y);
@@ -58,11 +71,9 @@ class Tic extends Figure {
     ctx.lineTo(this.x - this.width / 2, this.y);
     ctx.moveTo(this.x, this.y);
     ctx.lineTo(this.x + this.width / 2, this.y);
-    ctx.lineWidth = this.size;
-    ctx.strokeStyle = this.color;
-    ctx.rotate(this.angel * PI / 360);
     ctx.closePath();
     ctx.stroke();
+    ctx.restore();
   }
 }
 
@@ -84,29 +95,29 @@ function nextPoint2(x, y, time) {
   }
 }
 
-for (let i = 1; i < figureCount; i++) {
+for (let i = 0; i < figureCount; i++) {
   const tic = new Tic();
-
-  tic.draw();
-  animateFigure(tic);
-}
-
-for (let i = 1; i < figureCount; i++) {
   const tac = new Tac();
 
+  figures.push(tic);
+  figures.push(tac);
+
+  tic.draw();
   tac.draw();
-  animateFigure(tac);
 }
 
-function animateFigure(figure) {
-  const time = new Date().getTime() * (fps / 1000);
+animateFigure();
 
-  figure.x = figure.nextPoint(figure.x, figure.y, time).x;
-  figure.y = figure.nextPoint(figure.x, figure.y, time).y;
+function animateFigure() {
+  const time = new Date().getTime() * (FPS / 1000);
 
   ctx.clearRect(0, 0, wallW, wallH);
 
-  figure.draw();
+  figures.forEach((figure) => {
+    figure.x = figure.nextPoint(figure.x, figure.y, time).x;
+    figure.y = figure.nextPoint(figure.x, figure.y, time).y;
+    figure.draw();
+  });
 
-  window.requestAnimationFrame(() => animateFigure(figure));
+  window.requestAnimationFrame(animateFigure);
 }
