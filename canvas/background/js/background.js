@@ -55,7 +55,6 @@ class Tic extends Figure {
     super();
     this.width = 20 * this.size;
     this.angel = randomNumber(0, 360);
-    // this.speedRotate = randomNumber(-0.2, 0.2, true);
   }
 
   draw() {
@@ -96,14 +95,9 @@ function nextPoint2(x, y, time) {
 }
 
 for (let i = 0; i < figureCount; i++) {
-  const tic = new Tic();
-  const tac = new Tac();
-
-  figures.push(tic);
-  figures.push(tac);
-
-  tic.draw();
-  tac.draw();
+  const figure = (i <= figureCount / 2) ? new Tic() : new Tac();
+  figures.push(figure);
+  figure.draw();
 }
 
 animateFigure();
@@ -114,8 +108,9 @@ function animateFigure() {
   ctx.clearRect(0, 0, wallW, wallH);
 
   figures.forEach((figure) => {
-    figure.x = figure.nextPoint(figure.x, figure.y, time).x;
-    figure.y = figure.nextPoint(figure.x, figure.y, time).y;
+    const { x, y } = figure.nextPoint(figure.x, figure.y, time);
+    figure.x = x;
+    figure.y = y;
     figure.draw();
   });
 
