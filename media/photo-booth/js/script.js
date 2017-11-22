@@ -14,7 +14,7 @@ audio.src = './audio/click.mp3';
 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
   navigator.mediaDevices
     .getUserMedia({video: true, audio: false})
-    .then((stream) => {
+    .then(stream => {
       video.src = URL.createObjectURL(stream);
       video.play();
       app.appendChild(video);
@@ -23,7 +23,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 
       btnTakePhoto.addEventListener('click', () => takePicture(stream));
     })
-    .catch((error) => {
+    .catch(error => {
       errors.textContent = `Нет доступа к камере. Ошибка ${error.name}`;
       errors.style.display = 'block';
     });
@@ -40,10 +40,10 @@ function tmplImg(imgUrl) {
         el('i', {class: 'material-icons'}, 'file_download')
       ]),
       el('a', {}, [
-        el('i', {class: 'material-icons fileUpload'}, 'file_upload')
+        el('i', {class: 'material-icons'}, 'file_upload')
       ]),
       el('a', {}, [
-        el('i', {class: 'material-icons fileDelete'}, 'delete')
+        el('i', {class: 'material-icons'}, 'delete')
       ])
     ])
   ]);
@@ -54,18 +54,23 @@ function takePicture(stream) {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   let imgTpl;
+  let dataUrl;
 
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
 
   ctx.drawImage(video, 0, 0);
 
-  imgTpl = tmplImg(canvas.toDataURL());
+  dataUrl = canvas.toDataURL();
+  imgTpl = tmplImg(dataUrl);
 
   imgTpl.addEventListener('click', (e) => {
     switch(e.target.textContent) {
+      case 'file_download':
+        e.target.style.display = 'none';
+        break;
       case 'file_upload':
-        fetchRequest(canvas.toDataURL());
+        fetchRequest(dataUrl, e.target);
         break;
       case 'delete':
         imgTpl.parentNode.removeChild(imgTpl);
@@ -94,28 +99,41 @@ function el(tagName, attributes, children) {
   return element;
 }
 
-function fetchRequest(img) {
+function fetchRequest(imgData, target) {
   const data = new FormData();
+  const blob = dataUriToBlob(imgData);
 
-  data.append('image', img);
+  data.append('image', blob);
 
   fetch('https://neto-api.herokuapp.com/photo-booth', {
     body: data,
     credentials: 'same-origin',
     method: 'POST'
   })
-  .then((result) => {
+  .then(result => {
     if (200 <= result.status && result.status < 300) {
       return result;
     }
     throw new Error(result.statusText);
   })
-  .then((result) => result.json())
-  .then((data) => {
-    if (data.error) {
-      console.error(data.message);
-    } else {
-      console.log(data);
-    }
+  .then(result => {
+    // const linkToPhoto = el('div', {style: 'text-align: center; margin-top: 15px; font-weight: bold; color: #0f0;'}, result);
+
+    console.log(result);
+
+    // document.querySelector('.container').appendChild(linkToPhoto);
+    target.style.display = 'none';
   });
+}
+
+function dataUriToBlob(dataURI) {
+  const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+  const array = [];
+  const byteString = atob(dataURI.split(',')[1]);
+
+  for(let i = 0; i < byteString.length; i++) {
+    array.push(byteString.charCodeAt(i));
+  }
+
+  return new Blob([new Uint8Array(array)], { type: mimeString });
 }
