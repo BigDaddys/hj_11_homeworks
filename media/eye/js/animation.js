@@ -1,12 +1,15 @@
 'use strict';
 
+const eye = document.querySelector('.big-book__eye');
 const pupil = document.querySelector('.big-book__pupil');
 const pupilW = pupil.clientWidth;
 const pupilH = pupil.clientHeight;
 const pupilR = pupil.clientWidth / 2;
 
-// const centerInEyeX = pupil.offsetLeft + pupilR;
-// const centerInEyeY = pupil.offsetTop + pupilR;
+const rectPupil = pupil.getBoundingClientRect();
+
+const centerPupilX = rectPupil.x + pupilR;
+const centerPupilY = rectPupil.y + pupilR;
 
 // const offsetPupil = pupil.getBoundingClientRect()
 // const centerAbsX = offsetPupil.x + pupilR;
